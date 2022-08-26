@@ -269,8 +269,10 @@ struct HciLayer::impl {
 
       (*command_queue_.front().GetCallback<TResponse>())(std::move(response_view));
     } else {
-      (*command_queue_.front().GetCallback<CommandStatusOrCompleteView>())(
-              std::move(response_view));
+      CommandCompleteView command_complete_view = CommandCompleteView::Create(
+          EventView::Create(PacketView<kLittleEndian>(
+              std::make_shared<std::vector<uint8_t>>(std::vector<uint8_t>()))));
+      (*command_queue_.front().GetCallback<CommandCompleteView>())(std::move(command_complete_view));
     }
 
 #ifdef TARGET_FLOSS
